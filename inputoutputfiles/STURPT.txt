@@ -1,0 +1,7 @@
+  NAME                    PROGRAM    AVERAGE
+  Morrison, James             COM    100
+  Hartwell, Robert            COM    090
+  Johnson, Albert             PRG    080
+  Dupuis, Jane                PRG    090
+  James, Dorothy              COM    079
+RECORDS READ  005  RECORDS WRITTEN  005
