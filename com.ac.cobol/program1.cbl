@@ -1,133 +1,140 @@
-program-id. Project2 as "Project2".
+IDENTIFICATION DIVISION.
+        PROGRAM-ID. INDEX_CONVERSION.
+        AUTHOR. WEI YU .
+        DATE-WRITTEN. 02-DEC-2020.
+        DATE-COMPILED. O2-DEC-2020.
 
-        AUTHOR. Ziyin Yan,Weixin Wang.
-        DATE-WRITTEN. 2020-11-30.
+        *=================================================================
+        *THIS PROGRAM READ STUDENT RECORDS AND COURSE RECORDS FROM
+        *EXTERNALE FILES STUFILE.txt AND PROGRAM.txt, CALCULATE THE
+        *STUDENT AGERAGE, AND PRODUCE A STUDENT REPORT INTO A FILE
+        * NAMED STURPT.txt, THEN CONVERT THE SEQUENTIAL FILE INTO A
+        *INDEXED SEQUENTIAL FILE
+        *=================================================================
 
         ENVIRONMENT DIVISION.
         INPUT-OUTPUT SECTION.
         FILE-CONTROL.
-        SELECT STUDENT-FILE
-        ASSIGN TO "E:\STUFILE.TXT"
+        SELECT STUDENT-FILE-IN
+        ASSIGN TO "D:\Cobol\STUFILE.txt"
         ORGANIZATION IS LINE SEQUENTIAL.
+        SELECT STUDENT-FILE-OUT
+        ASSIGN TO "D:\Cobol\STUFILE_1.txt"
+        ORGANIZATION IS INDEXED
+        ACCESS MODE IS SEQUENTIAL
+        RECORD KEY IS STUD-NUM-OUT
+        FILE STATUS IS STUD-FILE-STAT.
 
-        SELECT STUDENT-REPORT
-        ASSIGN TO "E:\STURPT.TXT"
-        ORGANIZATION IS LINE SEQUENTIAL.
-
+        *=================================================================
+        *STUDENT-FILE-IN AND PROGRAM-FILE-IN ARE THE INPUT FILES.
+        *DURING INITIAZATION STUDENT-REPORT WILL BE POPULATED WITH THE
+        *DATA COLLECTED IN THE WORKING STORAGE RECORD IN THE
+        *STUDENT-REPORT-WS AND COLUMN-HEADER-WS
+        *=================================================================
         DATA DIVISION.
         FILE SECTION.
-        FD STUDENT-FILE.
+        FD STUDENT-FILE-IN.
         01  STUDENT-RECORD-IN.
-        05  STUDENT-NAME        PIC X(20).
-        05  STUDENT-NUMBER      PIC 9(9).
-        05  PROGRAM-NUMBER      PIC X(3).
-        05  MIDTERM-MARK        PIC 9(3).
-        05  FINAL-EXAM-MARK     PIC 9(3).
-        05  PROJECT-MARK        PIC 9(3).
-        05  LAB-MARK            PIC 9(3).
+        05  STUDENT-NUMBER      PIC 9(6).
+        05  TUITION-OWNED       PIC 9(4)V99.
+        05  STUDENT-NAME        PIC X(40).
+        05  PROGRAM-OF-STUDY    PIC X(5).
+        05  COURSE-CODE-1       PIC X(7).
+        05  COURSE-AVERAGE-1    PIC 9(3).
+        05  COURSE-CODE-2       PIC X(7).
+        05  COURSE-AVERAGE-2    PIC 9(3).
+        05  COURSE-CODE-3       PIC X(7).
+        05  COURSE-AVERAGE-3    PIC 9(3).
+        05  COURSE-CODE-4       PIC X(7).
+        05  COURSE-AVERAGE-4    PIC 9(3).
+        05  COURSE-CODE-5       PIC X(7).
+        05  COURSE-AVERAGE-5    PIC 9(3).
 
-        FD  STUDENT-REPORT.
-        01  STUDENT-REPORT-OUT      PIC  X(48).
+        FD STUDENT-FILE-OUT.
+        01  STUDENT-RECORD-OUT.
+        05  STUD-NUM-OUT             PIC 9(6).
+        05  TUITION-OWNED-OUT        PIC 9(4)V99.
+        05  STUDENT-NAME-OUT         PIC X(40).
+        05  PROGRAM-OF-STUDY-OUT     PIC X(5).
+        05  COURSE-CODE-1-OUT        PIC X(7).
+        05  COURSE-AVERAGE-1-OUT     PIC 9(3).
+        05  COURSE-CODE-2-OUT        PIC X(7).
+        05  COURSE-AVERAGE-2-OUT     PIC 9(3).
+        05  COURSE-CODE-3-OUT        PIC X(7).
+        05  COURSE-AVERAGE-3-OUT     PIC 9(3).
+        05  COURSE-CODE-4-OUT        PIC X(7).
+        05  COURSE-AVERAGE-4-OUT     PIC 9(3).
+        05  COURSE-CODE-5-OUT        PIC X(7).
+        05  COURSE-AVERAGE-5-OUT     PIC 9(3).
 
+        *=================================================================
+        *STUDENT-REPORT-WS IS FOR RECORD FORMATED DATA
+        *COLUMN-HEADER-WS IS FOR OUTPUT RECORD HEADER
+        *=================================================================
         WORKING-STORAGE SECTION.
 
-        01  COLUMN-HEADER.
-        05  FILLER        PIC X(2)    VALUE   SPACES.
-        05  FILLER        PIC X(20)   VALUE   "NAME".
-        05  FILLER        PIC X(4)    VALUE   SPACES.
-        05  FILLER        PIC X(7)    VALUE   "PROGRAM".
-        05  FILLER        PIC X(4)    VALUE   SPACES.
-        05  FILLER        PIC X(7)    VALUE   "AVERAGE".
-
-        01  STUDENT-DETAIL-LINE.
-        05  FILLER              PIC X(2)    VALUE   SPACES.
-        05  STUDENT-NAME-OUT    PIC X(20).
-        05  FILLER              PIC X(8)   VALUE   SPACES.
-        05  PROGRAM-NUMBER-OUT  PIC X(3).
-        05  FILLER              PIC X(4)    VALUE   SPACES.
-        05  STUDENT-AVERAGE-OUT PIC 9(3).
-
-        01  GRADE-AVERAGE.
-        05  STUDENT-AVERAGE     PIC 9(3).
-
-        01  COUNTERS.
-        05  FILLER      PIC X(14)	VALUE "RECORDS READ  ".
-        05  RECORDS-IN  PIC 9(3).
-        05  FILLER      PIC X(19)	VALUE "  RECORDS WRITTEN  ".
-        05  RECORDS-OUT PIC 9(3).
-
-        01  EOF-FLAG-CONTROL.
-        05  EOF-FLAG    PIC X(1)  VALUE "N".
-
+        *Control areas
+        01 FLAGS-WORKING-FIELDS.
+        05  EOF-FLAG                PIC X(3)    VALUE "NO ".
+        05  STUD-FILE-STAT          PIC X(2).
 
         PROCEDURE DIVISION.
-
-        100-CREATE-STUDENT-REPORT.
-        PERFORM 201-INITIATE-CREATE-STUDENT-REPORT.
-        PERFORM 202-CREATE-STUDENT-REPORT
-        UNTIL EOF-FLAG = "Y".
-        PERFORM 203-TERMINATE-CREATE-STUDENT-REPORT.
+        *Convert student file and program file
+        *into Indexed Sequential Files
+        100-CONVERT-STUD-PROG-FILE.
+        PERFORM 200-CONVERT-STUD-FILE.
         STOP RUN.
 
-        201-INITIATE-CREATE-STUDENT-REPORT.
-        PERFORM  701-OPEN-STUDENT-FILE.
-        PERFORM  702-WRITE-COLUMN-HEADER.
-        PERFORM  703-READ-STUDENT-RECORD.
-        PERFORM  704-INITIALIZE-READ-WRITE-COUNTS.
+        *Convert student files
+        200-CONVERT-STUD-FILE.
+        PERFORM 300-INIT-STUD-CONVERT.
+        PERFORM 301-PRODUCE-STUD-CONVERT UNTIL EOF-FLAG = "YES".
+        PERFORM 302-TERMINATE-STUD-CONVERT.
 
-        202-CREATE-STUDENT-REPORT.
-        PERFORM  705-CALCULATE-STUDENT-AVERAGE.
-        PERFORM  706-WRITE-DETAIL-LINES.
-        PERFORM  703-READ-STUDENT-RECORD.
+        *Initialize the Student File Convert
+        300-INIT-STUD-CONVERT.
+        PERFORM 500-OPEN-STUD-FILE.
+        PERFORM 501-INIT-FLAGS-WORKING-FIELDS.
+        PERFORM 502-READ-STUD-FILE-IN.
+
+        *Open the Student File
+        500-OPEN-STUD-FILE.
+        OPEN INPUT STUDENT-FILE-IN.
+
+        *Initialize FLAGS-WORKING-FIELDS.
+        501-INIT-FLAGS-WORKING-FIELDS.
+        INITIALIZE FLAGS-WORKING-FIELDS.
+
+        *Read in the Student File
+        502-READ-STUD-FILE-IN.
+        READ STUDENT-FILE-IN
+        AT END MOVE "YES" TO EOF-FLAG.
+        DISPLAY "READ SUCESSFULLY".
+
+        *Produce Student File Conversion
+        301-PRODUCE-STUD-CONVERT.
+        PERFORM 503-WRITE-STUD-RECORD.
+        PERFORM 502-READ-STUD-FILE-IN.
+
+        *Write Student File Out Record
+        503-WRITE-STUD-RECORD.
+        WRITE STUDENT-RECORD-OUT FROM STUDENT-RECORD-IN
+        INVALID KEY DISPLAY "Error: " STUDENT-RECORD-IN.
+        DISPLAY "WRITE SUCESSFULLY".
+
+        *Terminate the conversion of Student File
+        302-TERMINATE-STUD-CONVERT.
+        CLOSE STUDENT-FILE-IN
+        STUDENT-FILE-OUT.
+
+        END PROGRAM INDEX_CONVERSION.
 
 
-        203-TERMINATE-CREATE-STUDENT-REPORT.
-        PERFORM  707-DISPLAY-AUDIT-COUNTERS.
-        PERFORM  708-WRITE-AUDIT-COUNTERS-TO-FILE.
-        PERFORM  709-CLOSE-STUDENT-FILE.
 
-        701-OPEN-STUDENT-FILE.
-        OPEN    INPUT STUDENT-FILE
-        OPEN    OUTPUT STUDENT-REPORT.
 
-        702-WRITE-COLUMN-HEADER.
-        WRITE  STUDENT-REPORT-OUT
-        FROM  COLUMN-HEADER.
 
-        703-READ-STUDENT-RECORD.
-        READ STUDENT-FILE
-        AT END  MOVE "Y" TO EOF-FLAG.
-        ADD 1 TO RECORDS-IN.
 
-        704-INITIALIZE-READ-WRITE-COUNTS.
-        INITIALIZE  RECORDS-IN
-        RECORDS-OUT.
 
-        705-CALCULATE-STUDENT-AVERAGE.
-        COMPUTE STUDENT-AVERAGE =
-        MIDTERM-MARK * 0.35 + FINAL-EXAM-MARK * 0.40 +
-        PROJECT-MARK * 0.20 + LAB-MARK * 0.05.
 
-        706-WRITE-DETAIL-LINES.
-        MOVE STUDENT-NAME TO STUDENT-NAME-OUT.
-        MOVE PROGRAM-NUMBER TO PROGRAM-NUMBER-OUT.
-        MOVE STUDENT-AVERAGE TO STUDENT-AVERAGE-OUT.
-        WRITE STUDENT-REPORT-OUT
-        FROM STUDENT-DETAIL-LINE.
 
-        ADD 1 TO RECORDS-OUT.
 
-        707-DISPLAY-AUDIT-COUNTERS.
-        DISPLAY COUNTERS.
-
-        708-WRITE-AUDIT-COUNTERS-TO-FILE.
-        MOVE RECORDS-IN TO RECORDS-IN.
-        MOVE RECORDS-OUT TO RECORDS-OUT.
-        WRITE STUDENT-REPORT-OUT
-        FROM COUNTERS.
-
-        709-CLOSE-STUDENT-FILE.
-        CLOSE STUDENT-FILE.
-        CLOSE STUDENT-REPORT.
-
-        end program Project2.
