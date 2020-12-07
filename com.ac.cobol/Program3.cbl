@@ -18,7 +18,7 @@
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
            SELECT STUDENT-FILE-IN 
-               ASSIGN TO "D:\COBOL\STUINDEX3.TXT"
+               ASSIGN TO "D:\COBOL\STUFILE.TXT"
                    ORGANIZATION IS INDEXED
                        ACCESS MODE IS SEQUENTIAL
                            RECORD KEY IS STUDENT-NUMBER.
