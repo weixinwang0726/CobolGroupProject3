@@ -19,7 +19,9 @@
        FILE-CONTROL.
            SELECT STUDENT-FILE-IN 
                ASSIGN TO "D:\COBOL\STUFILE.TXT"
-                   ORGANIZATION IS LINE SEQUENTIAL.
+                   ORGANIZATION IS INDEXED
+                       ACCESS MODE IS SEQUENTIAL
+                           RECORD KEY IS STUDENT-NUMBER.
            SELECT PROGRAM-FILE-IN 
                ASSIGN TO "D:\COBOL\PROGRAM.TXT"
                    ORGANIZATION IS LINE SEQUENTIAL.   
