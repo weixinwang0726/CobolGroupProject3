@@ -73,7 +73,7 @@
            05  TUITION-OWNED-OUT-WS     PIC Z,ZZ9.99.
            
       *PROGRAM TABLE 
-           COPY "D:\COBOL\PROGRAM-TABLE.CBL".
+           COPY "D:\COBOL\PRG-TBL-STRUCTURE.CBL".
 
       *REPORT PAGE HEADING 
        01  PAGE-HEADER-WS.
