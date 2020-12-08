@@ -24,8 +24,6 @@
                        ACCESS MODE IS RANDOM
                            RECORD KEY IS STUDENT-NUMBER
                                FILE STATUS IS STATUS-FIELD.
-        
-
 
        DATA DIVISION.
        FILE SECTION.
@@ -57,45 +55,45 @@
 
       *Transaction Data Definition
        01  DATA-FROM-SCREEN.
-           05 STUD-NUM-IN-WS                  PIC 9(6).
+           05 STUD-NUM-IN-WS               PIC 9(6).
            05 PAYMENT-IN-WS                PIC 9(4).
 
        SCREEN SECTION.
       *Prompt the user to enter choice
        01  STUD-INFO-ENTRY-SCREEN.
-           05  VALUE   "Transaction Screen" LINE 5 COLUMN 16.
-           05  VALUE   "Transaction to enter? (Y/N)"
-               LINE 8 COLUMN 16.
-           05  CHOICE-IN                    LINE 9 COLUMN 16
-               PIC X(1)    TO CHOICE.
+           05  VALUE "Transaction Screen"  LINE 5 COLUMN 16.
+           05  VALUE "Transaction to enter? (Y/N)"
+                   LINE 8 COLUMN 16.
+           05  CHOICE-IN                   LINE 9 COLUMN 16
+                   PIC X(1)    TO CHOICE.
 
        01  STUD-NUM-INPUT-SCREEN.
-           05  VALUE "Student number: "     LINE 12 COLUMN  16.
-           05  STUD-NUM-INPUT               LINE 13 COLUMN 16
-               PIC 9(6)    TO STUD-NUM-IN-WS.
+           05  VALUE "Student number: "    LINE 12 COLUMN  16.
+           05  STUD-NUM-INPUT              LINE 13 COLUMN 16
+                   PIC 9(6)    TO STUD-NUM-IN-WS.
 
        01  TUIT-OWNED-INPUT-SCREEN.
-           05  VALUE "Tuition payment: "      LINE 17 COLUMN 16.
-           05  PAYMENT-INPUT             LINE 18 COLUMN 16
-           PIC 9(4) TO PAYMENT-IN-WS BLANK WHEN ZERO.
+           05  VALUE "Tuition payment: "   LINE 17 COLUMN 16.
+           05  PAYMENT-INPUT               LINE 18 COLUMN 16
+                   PIC 9(4) TO PAYMENT-IN-WS BLANK WHEN ZERO.
 
        01 REC-NOT-FOUND-SCREEN.
            05 VALUE "Record not found." BLANK SCREEN LINE 21
-               COLUMN 16.
+                   COLUMN 16.
 
       *Operation success message
        01 UPDATE-SUCCESS-SCREEN.
            05 VALUE "Successfully updated." BLANK SCREEN LINE 21 
-               COLUMN 16.
+                COLUMN 16.
 
       *Dsplay last input value.
        01 LAST-INPUT-VALUES.
            05 VALUE "STUDENT NUMBER:"        LINE 22 COLUMN 16.
            05 STU-NUM                        LINE 22 COLUMN 40
-               PIC 9(6)  FROM STUD-NUM-IN-WS.
+                   PIC 9(6)  FROM STUD-NUM-IN-WS.
            05 VALUE "TUITION PAYMENT:"       LINE 23 COLUMN 16.
            05 TUIT-OWED                      LINE 23 COLUMN 40
-               PIC 9(4) FROM PAYMENT-IN-WS.
+                   PIC 9(4) FROM PAYMENT-IN-WS.
            
        01 CLEAR-SCREEN.
            05 BLANK SCREEN.
@@ -161,7 +159,6 @@
                            DISPLAY REC-NOT-FOUND-SCREEN
                NOT INVALID KEY
                             DISPLAY UPDATE-SUCCESS-SCREEN
-                           
            END-REWRITE.
            
        END PROGRAM UPDATE-STUD-FILE.

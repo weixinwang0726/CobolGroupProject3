@@ -1,4 +1,4 @@
-      *==========================================================       ====
+      *=============================================================
       *COURSE:CST8283 BUSINESS PROGRAMMING
       *PROFESSOR:MEL SANSCHAGRIN
       *GROUP MEMBERS: WEI YU,WEIXIN WANG,ZIYIN YAN, CHUN XIA LI, 
@@ -9,6 +9,7 @@
       *STUDENT AGERAGE, AND PRODUCE A STUDENT REPORT INTO A FILE
       * NAMED STURPT.TXT      
       *==============================================================
+       
        IDENTIFICATION DIVISION.
        PROGRAM-ID. CAL-AVERAGE.
        AUTHOR. WEI YU, WEIXIN WANG, ZIYIN YAN, CHUN XIA LI, DING SUN, 
@@ -27,16 +28,12 @@
                                FILE STATUS IS STUD-FILE-STAT.
            SELECT PROGRAM-FILE-IN 
                ASSIGN TO "D:\COBOL\PROGRAM.TXT"
-                   ORGANIZATION IS LINE SEQUENTIAL.   
+                   ORGANIZATION IS LINE SEQUENTIAL. 
+                   
            SELECT STUDENT-REPORT
                ASSIGN TO "D:\COBOL\STURPT.TXT"
                    ORGANIZATION IS LINE SEQUENTIAL.
-      *=================================================================
-      *STUDENT-FILE-IN AND PROGRAM-FILE-IN ARE THE INPUT FILES.
-      *DURING INITIAZATION STUDENT-REPORT WILL BE POPULATED WITH THE 
-      *DATA COLLECTED IN THE WORKING STORAGE RECORD IN THE 
-      *STUDENT-REPORT-WS AND COLUMN-HEADER-WS
-      *=================================================================
+
        DATA DIVISION.
        FILE SECTION.
        FD STUDENT-FILE-IN.
@@ -64,10 +61,6 @@
        FD STUDENT-REPORT.
        01  STUDENT-REPORT-RECORD-OUT   PIC X(83).
 
-      *================================================================
-      *STUDENT-REPORT-WS IS FOR RECORD FORMATED DATA  
-      *COLUMN-HEADER-WS IS FOR OUTPUT RECORD HEADER
-      *=================================================================
        WORKING-STORAGE SECTION.
       *REPORT OUTPUT DATA FIELD
        01  STUDENT-REPORT-WS.
@@ -80,7 +73,7 @@
            05  TUITION-OWNED-OUT-WS     PIC Z,ZZ9.99.
            
       *PROGRAM TABLE 
-       COPY "D:\COBOL\PROGRAM-TABLE.CBL".
+           COPY "D:\COBOL\PROGRAM-TABLE.CBL".
 
       *REPORT PAGE HEADING 
        01  PAGE-HEADER-WS.
@@ -144,7 +137,6 @@
            PERFORM 308-DISPLAY-RECORD-COUNTERS.
            PERFORM 309-CLOSE-FILES.
 
-       
        301-OPEN-STUDENT-PROGRAM-FILES.
            OPEN INPUT  STUDENT-FILE-IN
                        PROGRAM-FILE-IN
@@ -182,7 +174,6 @@
            WRITE STUDENT-REPORT-RECORD-OUT FROM STUDENT-REPORT-WS 
                AFTER ADVANCING 1 LINES.
            ADD 1 TO RECORDS-OUT-COUNTER-WS.
-           
 
        402-SEARCH-RTN.
            IF PROGRAM-OF-STUDY = PROGRAM-CODE-TBL-WS(TBL-SUB)

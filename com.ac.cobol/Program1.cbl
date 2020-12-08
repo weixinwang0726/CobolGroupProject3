@@ -18,17 +18,17 @@
        ENVIRONMENT DIVISION.
        INPUT-OUTPUT SECTION.
        FILE-CONTROL.
-       SELECT STUDENT-FILE-IN
-           ASSIGN TO "D:\Cobol\STUFILE3.TXT"
-               ORGANIZATION IS LINE SEQUENTIAL.
+           SELECT STUDENT-FILE-IN
+               ASSIGN TO "D:\Cobol\STUFILE3.TXT"
+                   ORGANIZATION IS LINE SEQUENTIAL.
                
-       SELECT INDEXED-STUDENT-FILE
-           ASSIGN TO "D:\Cobol\STUFILE_IN.TXT"
-               ORGANIZATION IS INDEXED
-                   ACCESS MODE IS SEQUENTIAL
-                       RECORD KEY IS STUD-NUM-OUT
-                           FILE STATUS IS STATUS-FIELD.
-
+           SELECT INDEXED-STUDENT-FILE
+               ASSIGN TO "D:\Cobol\STUFILE_IN.TXT"
+                   ORGANIZATION IS INDEXED
+                       ACCESS MODE IS SEQUENTIAL
+                           RECORD KEY IS STUD-NUM-OUT
+                               FILE STATUS IS STATUS-FIELD.
+                           
        DATA DIVISION.
        FILE SECTION.
        FD STUDENT-FILE-IN.
@@ -65,7 +65,6 @@
            05  COURSE-CODE-5-OUT        PIC X(7).
            05  COURSE-AVERAGE-5-OUT     PIC 9(3).
 
-
        WORKING-STORAGE SECTION.
        
       *Control areas
@@ -75,8 +74,8 @@
            05  VALID-FLAG              PIC X(3).
 
        PROCEDURE DIVISION.
+           
       *Convert student file into Indexed Sequential Files
-      
        100-CREATE-INDEXED-STUD-FILE.
            PERFORM 201-INITIALIZE-CREATE-FILE.
            PERFORM 202-CREATE-STUD-RECORDS UNTIL EOF-FLAG = "YES".
@@ -98,7 +97,6 @@
        300-OPEN-STUD-FILE.
            OPEN INPUT STUDENT-FILE-IN
                OUTPUT INDEXED-STUDENT-FILE.
-
 
       *Initialize FLAGS-WORKING-FIELDS.
        301-INIT-FLAGS-WORKING-FIELDS.
