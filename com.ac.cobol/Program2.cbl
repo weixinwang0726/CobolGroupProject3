@@ -4,7 +4,7 @@
       *GROUP MEMBERS: WEI YU,WEIXIN WANG,ZIYIN YAN, CHUN XIA LI, 
       *DING SUN, JINGSHAN GUAN
       *ESCRIPTION:
-      *THIS PROGRAM UPDATES THE INDEXED SEQUENTIAL STUDENT FILE WITH
+      *THIS PROGRAM UPDATE THE INDEXED SEQUENTIAL STUDENT FILE WITH
       *ON-LINE TRANSACTIONS USING A SCREENSECTION.
       *==============================================================*
        
@@ -30,7 +30,7 @@
        FD STUDENT-FILE.
        01 STUDENT-RECORD.
            05  STUDENT-NUMBER      PIC 9(6).
-           05  TUITION-OWED       PIC 9(4)V99.
+           05  TUITION-OWED        PIC 9(4)V99.
            05  STUDENT-NAME        PIC X(40).
            05  PROGRAM-OF-STUDY    PIC X(5).
            05  COURSE-CODE-1       PIC X(7).
@@ -45,56 +45,54 @@
            05  COURSE-AVERAGE-5    PIC 9(3).
 
        WORKING-STORAGE SECTION.
-      *File status field
-       01  STATUS-FIELD.
-           05 FILE-STATUS           PIC X(2).
+      *Flag control field
+       01  FLAG-CONTROL.
+           05 STATUS-FIELD         PIC X(2).
+           05 FOUND-FLAG           PIC X(1) VALUE "N".
 
       *User Input Definition
        01  USER-INPUT.
-           05 CHOICE                PIC X(1).
+           05 CHOICE               PIC X(1).
 
       *Transaction Data Definition
        01  DATA-FROM-SCREEN.
-           05 STUD-NUM-IN-WS               PIC 9(6).
-           05 PAYMENT-IN-WS                PIC 9(4).
+           05 STUD-NUM-IN-WS       PIC 9(6).
+           05 PAYMENT-IN-WS        PIC 9(4).
 
        SCREEN SECTION.
       *Prompt the user to enter choice
        01  STUD-INFO-ENTRY-SCREEN.
-           05  VALUE "Transaction Screen"  LINE 5 COLUMN 16.
-           05  VALUE "Transaction to enter? (Y/N)"
-                   LINE 8 COLUMN 16.
-           05  CHOICE-IN                   LINE 9 COLUMN 16
-                   PIC X(1)    TO CHOICE.
+           05  VALUE   "Transaction Screen" LINE 5 COLUMN 16.
+           05  VALUE   "Transaction to enter? (Y/N)"
+               LINE 8 COLUMN 16.
+           05  CHOICE-IN                    LINE 9 COLUMN 16
+               PIC X(1)    TO CHOICE.
 
        01  STUD-NUM-INPUT-SCREEN.
-           05  VALUE "Student number: "    LINE 12 COLUMN  16.
-           05  STUD-NUM-INPUT              LINE 13 COLUMN 16
-                   PIC 9(6)    TO STUD-NUM-IN-WS.
+           05  VALUE "Student number: "     LINE 12 COLUMN  16.
+           05  STUD-NUM-INPUT               LINE 13 COLUMN 16
+               PIC 9(6)    TO STUD-NUM-IN-WS.
 
        01  TUIT-OWNED-INPUT-SCREEN.
-           05  VALUE "Tuition payment: "   LINE 17 COLUMN 16.
-           05  PAYMENT-INPUT               LINE 18 COLUMN 16
-                   PIC 9(4) TO PAYMENT-IN-WS BLANK WHEN ZERO.
+           05  VALUE "Tuition payment: "       LINE 17 COLUMN 16.
+           05  PAYMENT-INPUT                   LINE 18 COLUMN 16
+               PIC 9(4)    TO PAYMENT-IN-WS       BLANK WHEN ZERO.
 
        01 REC-NOT-FOUND-SCREEN.
-           05 VALUE "Record not found." BLANK SCREEN LINE 21
-                   COLUMN 16.
+           05 VALUE "Record not found."        BLANK SCREEN LINE 21
+               COLUMN 16.
 
       *Operation success message
        01 UPDATE-SUCCESS-SCREEN.
            05 VALUE "Successfully updated." BLANK SCREEN LINE 21 
-                COLUMN 16.
-
-      *Dsplay last input value.
-       01 LAST-INPUT-VALUES.
+               COLUMN 16.
            05 VALUE "STUDENT NUMBER:"        LINE 22 COLUMN 16.
            05 STU-NUM                        LINE 22 COLUMN 40
-                   PIC 9(6)  FROM STUD-NUM-IN-WS.
+               PIC 9(6)    FROM STUD-NUM-IN-WS.
            05 VALUE "TUITION PAYMENT:"       LINE 23 COLUMN 16.
            05 TUIT-OWED                      LINE 23 COLUMN 40
-                   PIC 9(4) FROM PAYMENT-IN-WS.
-           
+               PIC 9(4)    FROM PAYMENT-IN-WS.
+
        01 CLEAR-SCREEN.
            05 BLANK SCREEN.
 
@@ -116,8 +114,8 @@
        201-CREATE-UPDATE-STUD-FILE.
            PERFORM 302-ACCEPT-STUD-DATA-ENTRY.
            PERFORM 303-READ-STUD-DATA.
-           PERFORM 304-CALCULATE-TUITION-OWED.
-           PERFORM 305-REWRITE-STUD-DATA.
+           PERFORM 304-PROCESS-PAYMENT-TRANSACTION 
+               UNTIL FOUND-FLAG = "N".
            PERFORM 301-READ-USER-CHOICE.
 
       *Close all the files
@@ -146,21 +144,29 @@
            MOVE STUD-NUM-IN-WS TO STUDENT-NUMBER.
            READ STUDENT-FILE
                KEY IS STUDENT-NUMBER
-               INVALID KEY DISPLAY REC-NOT-FOUND-SCREEN.
+               INVALID KEY 
+                           DISPLAY REC-NOT-FOUND-SCREEN
+               NOT INVALID KEY 
+                           MOVE "Y" TO FOUND-FLAG.
+           
+      *Process payment transaction
+       304-PROCESS-PAYMENT-TRANSACTION.
+           PERFORM 401-CALCULATE-TUITION-OWED.
+           PERFORM 402-REWRITE-STUD-DATA.
            
       *Calculate tuition owed based on payment
-       304-CALCULATE-TUITION-OWED.
+       401-CALCULATE-TUITION-OWED.
            COMPUTE TUITION-OWED = TUITION-OWED - PAYMENT-IN-WS.         
        
       *Rewrite updated tuiation to the file    
-       305-REWRITE-STUD-DATA.
+       402-REWRITE-STUD-DATA.
            REWRITE STUDENT-RECORD
                INVALID KEY 
                            DISPLAY REC-NOT-FOUND-SCREEN
                NOT INVALID KEY
-                            DISPLAY UPDATE-SUCCESS-SCREEN
+                           DISPLAY UPDATE-SUCCESS-SCREEN
            END-REWRITE.
-           
+           MOVE "N" TO FOUND-FLAG.
        END PROGRAM UPDATE-STUD-FILE.
 
 
