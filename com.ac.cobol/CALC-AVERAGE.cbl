@@ -1,10 +1,12 @@
-      *==============================================================
+      *========================================================
       *COURSE:CST8283 BUSINESS PROGRAMMING
       *PROFESSOR:MEL SANSCHAGRIN
-      *GROUP MEMBERS: WEI YU
+      *GROUP MEMBERS: WEI YU, WEIXIN WANG, ZIYIN YAN, CHUN XIA LI, 
+      *DING SUN, JINGSHAN GUAN                                         
       *DESCRIPTION:
-      *THIS SUBROUTINE CALCULATE THE STUDENT GRAGE AVERAGE
-      *==============================================================
+      *THIS PROGRAM CALCULATES STUDENT GRADE AVARAGE
+      *===============================================================  
+                                                                        
        IDENTIFICATION DIVISION.
        PROGRAM-ID. CALC-AVERAGE.
        AUTHOR.WEI YU.
